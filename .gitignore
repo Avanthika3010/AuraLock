@@ -28,6 +28,7 @@
 /build/
 
 # Android related
+<<<<<<< HEAD
 android/*/gradle-wrapper.jar
 android/.gradle
 android/captures/
@@ -38,3 +39,12 @@ android/*/GeneratedPluginRegistrant.java
 android/build/
 android/app/google-services.json
 
+=======
+*/android/*/gradle-wrapper.jar
+**/android/.gradle
+**/android/captures/
+**/android/gradlew
+**/android/gradlew.bat
+**/android/local.properties
+*/android/*/GeneratedPluginRegistrant.java
+>>>>>>> 13d2bfb (update gitignore)
