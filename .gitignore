@@ -1,7 +1,10 @@
+# Compiled files
 *.class
 *.log
 *.pyc
 *.swp
+
+# System files
 .DS_Store
 .atom/
 .buildlog/
@@ -25,26 +28,33 @@
 .packages
 .pub-cache/
 .pub/
-/build/
+build/
 
 # Android related
-<<<<<<< HEAD
-android/*/gradle-wrapper.jar
-android/.gradle
+android/.gradle/
 android/captures/
 android/gradlew
 android/gradlew.bat
 android/local.properties
-android/*/GeneratedPluginRegistrant.java
+android/**/GeneratedPluginRegistrant.java
+android/**/gradle-wrapper.jar
 android/build/
 android/app/google-services.json
 
-=======
-*/android/*/gradle-wrapper.jar
-**/android/.gradle
-**/android/captures/
-**/android/gradlew
-**/android/gradlew.bat
-**/android/local.properties
-*/android/*/GeneratedPluginRegistrant.java
->>>>>>> 13d2bfb (update gitignore)
+# iOS/macOS related
+ios/Flutter/GeneratedPluginRegistrant.*
+ios/Flutter/App.framework
+ios/Flutter/Flutter.framework
+ios/Flutter/engine/
+ios/Pods/
+ios/.symlinks/
+ios/build/
+
+macos/Flutter/GeneratedPluginRegistrant.*
+macos/Pods/
+macos/.symlinks/
+macos/build/
+
+# Linux/Windows
+linux/flutter/ephemeral/
+windows/flutter/ephemeral/
