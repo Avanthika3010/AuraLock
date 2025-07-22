@@ -8,16 +8,18 @@ class BlinkService {
   bool _isMonitoring = false;
   Timer? _blinkTimer;
   Timer? _simulationTimer;
-  
+
   // Blink detection variables
   int _blinkCount = 0;
   DateTime? _lastBlinkTime;
   double _eyeOpenThreshold = 0.3; // Threshold for eye open probability
   int _blinkCooldownMs = 300; // Minimum time between blinks
-  
+
   // Stream controllers for real-time updates
-  final StreamController<int> _blinkCountController = StreamController<int>.broadcast();
-  final StreamController<double> _blinkRateController = StreamController<double>.broadcast();
+  final StreamController<int> _blinkCountController =
+      StreamController<int>.broadcast();
+  final StreamController<double> _blinkRateController =
+      StreamController<double>.broadcast();
 
   // Getters for streams
   Stream<int> get blinkCountStream => _blinkCountController.stream;
@@ -70,10 +72,10 @@ class BlinkService {
       _isMonitoring = false;
       _simulationTimer?.cancel();
       _blinkTimer?.cancel();
-      
+
       // Calculate final blink rate
       await _calculateAndUploadBlinkRate();
-      
+
       debugPrint('Blink monitoring stopped');
     } catch (e) {
       debugPrint('Error stopping blink monitoring: $e');
@@ -85,19 +87,20 @@ class BlinkService {
     if (!_isMonitoring) return;
 
     final now = DateTime.now();
-    
+
     // Simulate random blinks (15-20 blinks per minute on average)
     final random = DateTime.now().millisecondsSinceEpoch % 100;
-    if (random < 25) { // 25% chance of blink every 3 seconds
+    if (random < 25) {
+      // 25% chance of blink every 3 seconds
       // Check if enough time has passed since last blink
-      if (_lastBlinkTime == null || 
+      if (_lastBlinkTime == null ||
           now.difference(_lastBlinkTime!).inMilliseconds > _blinkCooldownMs) {
         _blinkCount++;
         _lastBlinkTime = now;
-        
+
         // Update stream
         _blinkCountController.add(_blinkCount);
-        
+
         debugPrint('Simulated blink detected! Count: $_blinkCount');
       }
     }
@@ -111,21 +114,20 @@ class BlinkService {
 
       // Calculate blink rate (blinks per minute)
       final blinkRate = _blinkCount.toDouble();
-      
+
       // Upload to Firestore
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .update({
-        'blinkRate': blinkRate,
-        'lastBlinkUpdate': FieldValue.serverTimestamp(),
-      });
+      await FirebaseFirestore.instance.collection('users').doc(user.uid).update(
+        {
+          'blinkRate': blinkRate,
+          'lastBlinkUpdate': FieldValue.serverTimestamp(),
+        },
+      );
 
       // Update stream
       _blinkRateController.add(blinkRate);
-      
+
       debugPrint('Blink rate uploaded: $blinkRate blinks/min');
-      
+
       // Reset counter for next minute
       _blinkCount = 0;
       _blinkCountController.add(_blinkCount);
@@ -137,9 +139,9 @@ class BlinkService {
   /// Manually trigger a blink (for testing)
   void triggerBlink() {
     if (!_isMonitoring) return;
-    
+
     final now = DateTime.now();
-    if (_lastBlinkTime == null || 
+    if (_lastBlinkTime == null ||
         now.difference(_lastBlinkTime!).inMilliseconds > _blinkCooldownMs) {
       _blinkCount++;
       _lastBlinkTime = now;
@@ -238,25 +240,31 @@ class _BlinkMonitorWidgetState extends State<BlinkMonitorWidget> {
               ],
             ),
             const SizedBox(height: 16),
-            
+
             // Status
             Row(
               children: [
                 Icon(
-                  _blinkService.isInitialized ? Icons.check_circle : Icons.error,
-                  color: _blinkService.isInitialized ? Colors.green : Colors.red,
+                  _blinkService.isInitialized
+                      ? Icons.check_circle
+                      : Icons.error,
+                  color: _blinkService.isInitialized
+                      ? Colors.green
+                      : Colors.red,
                   size: 16,
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  _blinkService.isInitialized ? 'Ready (Simulation Mode)' : 'Not Initialized',
+                  _blinkService.isInitialized
+                      ? 'Ready (Simulation Mode)'
+                      : 'Not Initialized',
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ],
             ),
-            
+
             const SizedBox(height: 12),
-            
+
             // Blink count stream
             StreamBuilder<int>(
               stream: _blinkService.blinkCountStream,
@@ -267,16 +275,20 @@ class _BlinkMonitorWidgetState extends State<BlinkMonitorWidget> {
                 );
               },
             ),
-            
+
             const SizedBox(height: 12),
-            
+
             // Control buttons
             Row(
               children: [
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: _blinkService.isInitialized ? _toggleMonitoring : null,
-                    child: Text(_isMonitoring ? 'Stop Monitoring' : 'Start Monitoring'),
+                    onPressed: _blinkService.isInitialized
+                        ? _toggleMonitoring
+                        : null,
+                    child: Text(
+                      _isMonitoring ? 'Stop Monitoring' : 'Start Monitoring',
+                    ),
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -286,9 +298,9 @@ class _BlinkMonitorWidgetState extends State<BlinkMonitorWidget> {
                 ),
               ],
             ),
-            
+
             const SizedBox(height: 8),
-            
+
             Text(
               'Note: This is a simulation. Real camera-based detection will be implemented later.',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -307,4 +319,4 @@ class _BlinkMonitorWidgetState extends State<BlinkMonitorWidget> {
     _blinkService.dispose();
     super.dispose();
   }
-} 
+}
